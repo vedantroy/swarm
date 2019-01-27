@@ -11,7 +11,7 @@
             android:theme="@style/AppTheme" tools:ignore="GoogleAppIndexingWarning">
         <meta-data
                 android:name="com.google.android.nearby.messages.API_KEY"
-                android:value="AIzaSyD9AAP_kSXjBE3PJ7-e63lm0W6CFALo4IM" />
+                android:value="AIzaSyAhgb6t_yKWURmzB2loHo7Xn5mrZr_CMwE" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -20,5 +20,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>
