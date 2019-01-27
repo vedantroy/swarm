@@ -3,6 +3,7 @@ package rstudio.vedantroy.swarm
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.messages.Message
 import com.google.android.gms.nearby.messages.MessageListener
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
             override fun onFound(message: Message) {
                 super.onFound(message)
                 Log.d(TAG, "Found message: " +  String(message.content))
+                Toast.makeText(applicationContext, "Found message: " + String(message.content), Toast.LENGTH_LONG).show()
             }
 
             override fun onLost(message: Message) {
@@ -32,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        mMessage =  Message("Hello World".toByteArray())
+        mMessage =  Message(("Origin: " + android.os.Build.MODEL).toByteArray())
     }
 
     override fun onStart() {
