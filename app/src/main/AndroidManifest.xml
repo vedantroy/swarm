@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="rstudio.vedantroy.swarm">
+          xmlns:tools="http://schemas.android.com/tools" package="rstudio.vedantroy.swarm">
 
     <application
             android:allowBackup="true"
@@ -8,7 +8,10 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme" tools:ignore="GoogleAppIndexingWarning">
+        <meta-data
+                android:name="com.google.android.nearby.messages.API_KEY"
+                android:value="AIzaSyD9AAP_kSXjBE3PJ7-e63lm0W6CFALo4IM" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
