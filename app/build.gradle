@@ -29,8 +29,11 @@ dependencies {
     //JSON Serialization/Deserialization Library
     implementation 'com.beust:klaxon:5.0.1'
     implementation 'com.google.android.gms:play-services-nearby:16.0.0'
+
+    //View Libraries
     implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha01'
     implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.google.android:flexbox:1.1.0'
 
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])

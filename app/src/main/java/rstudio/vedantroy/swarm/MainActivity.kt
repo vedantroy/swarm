@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         deviceID = android.os.Build.MANUFACTURER //Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
 
         postFeed.layoutManager = LinearLayoutManager(
@@ -149,9 +150,6 @@ class MainActivity : AppCompatActivity() {
             .build()
 
         Nearby
-            .get
-
-        Nearby
             .getConnectionsClient(this)
             .startAdvertising(
                 deviceID,
@@ -212,8 +210,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-
-
 
         /*
         with(Nearby.getConnectionsClient(this)) {
