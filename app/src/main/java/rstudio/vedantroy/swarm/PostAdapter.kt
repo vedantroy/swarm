@@ -21,8 +21,6 @@ class PostAdapter(private val items : List<Post>, private val contex: Context) :
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         holder.bodyContent.text = items[position].content
-        Log.d("SWARM_APP", "Setting text...")
-
     }
 }
 

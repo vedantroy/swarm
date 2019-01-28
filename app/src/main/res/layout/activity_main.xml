@@ -5,26 +5,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/greyBackground"
+    android:paddingLeft="@dimen/horizontal_padding"
+    android:paddingRight="@dimen/horizontal_padding"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
     tools:context=".MainActivity">
 
     <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/postFeed"
-            android:layout_marginLeft="@dimen/horizontal_base_padding"
-            android:layout_marginRight="@dimen/horizontal_base_padding"
     />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="@dimen/fab_margin_minus_horizontal_padding"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:rippleColor="@color/colorAccentLight"
+        android:src="@drawable/ic_pencil_24px"
         android:clickable="true"
         android:focusable="true"
-        android:id="@+id/createPost"/>
+        android:id="@+id/createPost"
+        tools:ignore="RtlHardcoded"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

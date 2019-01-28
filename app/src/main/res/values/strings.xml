@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Swarm</string>
+
+    <string name="text_prompt_title" >Create Post</string>
+    <string name="submit" >Submit</string>
+    <string name="cancel" >Cancel</string>
 </resources>
