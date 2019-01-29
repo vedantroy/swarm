@@ -2,59 +2,63 @@
 
 
 <androidx.cardview.widget.CardView
+    android:id="@+id/card_base"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     app:cardCornerRadius="5dp"
     app:cardElevation="3dp"
     app:contentPadding="8dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="100dp"
     android:layout_marginTop="4dp"
-    android:layout_marginBottom="4dp">
+    android:layout_marginBottom="4dp"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <com.google.android.flexbox.FlexboxLayout
+        <RelativeLayout
+            android:id="@+id/header"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="20dp"
-            android:background="@color/colorAccentLight"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:flexDirection="row"
-            app:justifyContent="flex_start"
-            app:alignItems="flex_end"
-            >
+            android:layout_marginBottom="8dp">
 
-            <TextView
-                android:textSize="18sp"
-                style="@style/Base.TextAppearance.AppCompat.Medium"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="bottom"
-                android:background="@color/greyBackground"
-                android:text="30"
-            />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                style="@style/Base.TextAppearance.AppCompat.Small"
-                android:text="bart"/>
-
-
-        </com.google.android.flexbox.FlexboxLayout>
-
+                <TextView
+                    android:id="@+id/vote_display"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    style="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:textSize="24sp"
+                    android:paddingRight="2dp"
+                    tools:ignore="RtlHardcoded,RtlSymmetry"/>
+                <TextView
+                    android:id="@+id/user_display"
+                    android:layout_toRightOf="@id/vote_display"
+                    android:layout_alignBaseline="@id/vote_display"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textStyle="bold"
+                    android:textSize="12sp"
+                    android:textColor="#2F4F70"
+                    tools:ignore="RtlHardcoded"/>
+        </RelativeLayout>
 
         <TextView
-            android:textColor="#000"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/header"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/bodyContent"/>
+            android:id="@+id/bodyContent"
+        />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

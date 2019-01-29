@@ -17,10 +17,12 @@ import com.google.android.gms.nearby.connection.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.text_input_prompt.view.*
 
+
 class MainActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "SWARM_APP"
+
     }
 
     @SuppressLint("HardwareIds")
@@ -28,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private val posts = mutableListOf<Post>()
+    val everyPostEver = mutableListOf<ImmutablePostData>()
 
     val connectionStatuses = HashMap<String, Boolean>()
 
@@ -51,29 +54,40 @@ class MainActivity : AppCompatActivity() {
                 .setTitle(getString(R.string.text_prompt_title))
                 .setView(textPromptLayout)
                 .setPositiveButton(R.string.submit) { dialog, _ ->
-                    val post = Post(textPromptLayout.post_input.text.toString(), 0)
-                    posts.add(post)
-                    postFeed.adapter?.notifyDataSetChanged()
-
-                    val bytes = Klaxon()
-                        .toJsonString(post)
-                        .toByteArray()
-
-                    for((key, value) in connectionStatuses) {
-                        if(value) {
-                            Nearby
-                                .getConnectionsClient(this)
-                                .sendPayload(
-                                    key,
-                                    Payload.fromBytes(bytes)
-                                )
-                        }
+                    val immutablePostData = ImmutablePostData(textPromptLayout.post_input.text.toString(), deviceID, 0)
+                    while(alreadyHavePost(immutablePostData)) {
+                        Log.d(TAG,"Count: " + immutablePostData.count)
+                        immutablePostData.count++
                     }
+                    Log.d(TAG, "Unique Post ID finished")
+                    val post = Post(PostData(immutablePostData, 1), true)
+                    everyPostEver.add(immutablePostData)
+                    posts.add(post)
+                    //TODO --make this more efficient
+                    postFeed.adapter?.notifyDataSetChanged()
+                    sendPostData(post.postData)
                     dialog.cancel()
                 }.setNegativeButton(R.string.cancel) { dialog, _ ->
                     dialog.cancel()
                 }.create()
                 .show()
+        }
+    }
+
+    //TODO Use-cases can def. be optimized
+    fun alreadyHavePost(immutablePostData: ImmutablePostData)  = everyPostEver.find { it == immutablePostData } != null
+
+    fun sendPostData(postData: PostData) {
+        val bytes = Klaxon()
+            .toJsonString(postData)
+            .toByteArray()
+
+        for((key, value) in connectionStatuses) {
+            if(value) {
+                Nearby
+                    .getConnectionsClient(this)
+                    .sendPayload(key, Payload.fromBytes(bytes))
+            }
         }
     }
 
@@ -92,9 +106,17 @@ class MainActivity : AppCompatActivity() {
                     Payload.Type.BYTES -> {
                         val bytes = payload.asBytes()
                         bytes?.let {
-                             Klaxon().parse<Post>(String(it))
+                             Klaxon().parse<PostData>(String(it))
                         }?.let {
-                            posts.add(it)
+                            if(alreadyHavePost(it.immutablePostData)) {
+                                //The !! is fine because it should never be triggered
+                                posts.find { post ->
+                                    post.postData.immutablePostData == it.immutablePostData
+                                }!!.postData.votes = it.votes
+                            } else {
+                                posts.add(Post(it, false))
+                            }
+                            //TODO make this more efficient
                             postFeed.adapter?.notifyDataSetChanged()
                         }
                     }
@@ -141,7 +163,6 @@ class MainActivity : AppCompatActivity() {
                     .getConnectionsClient(applicationContext)
                     .acceptConnection(endpointID, payloadCallback)
             }
-
         }
 
         val advertisingOptions = AdvertisingOptions
@@ -206,21 +227,5 @@ class MainActivity : AppCompatActivity() {
             }.addOnCanceledListener {
                 Log.d(TAG, "Discovery cancelled!")
             }
-    }
-
-    override fun onStop() {
-        super.onStop()
-
-        /*
-        with(Nearby.getConnectionsClient(this)) {
-            stopDiscovery()
-            stopAdvertising()
-            stopAllEndpoints()
-        }
-
-        for((key, _) in connectionStatuses) {
-            connectionStatuses[key] = false
-        }
-        */
     }
 }

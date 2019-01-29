@@ -5,4 +5,6 @@
     <color name="colorAccent">#D81B60</color>
     <color name="colorAccentLight">#f18eb2</color>
     <color name="greyBackground">#E4E4E4</color>
+
+    <color name="upvoted_orange">#EBBC8E</color>
 </resources>
