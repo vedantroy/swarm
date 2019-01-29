@@ -6,18 +6,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/greyBackground"
-    android:paddingLeft="@dimen/horizontal_padding"
-    android:paddingRight="@dimen/horizontal_padding"
-    android:paddingTop="4dp"
-    android:paddingBottom="4dp"
     tools:context=".MainActivity">
 
+    <!--
     <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/postFeed"
     />
+    -->
 
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom">
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Tab 1"/>
+
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Tab 2"/>
+
+        </com.google.android.material.tabs.TabLayout>
+
+    </androidx.viewpager.widget.ViewPager>
+
+    <!--
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -31,6 +56,7 @@
         android:focusable="true"
         android:id="@+id/createPost"
         tools:ignore="RtlHardcoded"/>
+        -->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

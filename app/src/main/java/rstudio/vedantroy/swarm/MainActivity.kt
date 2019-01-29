@@ -37,6 +37,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val pagerAdapter = BaseFragmentPagerAdapter(this, supportFragmentManager)
+        view_pager.adapter = pagerAdapter
+        tab_layout.setupWithViewPager(view_pager)
+
+
+        /*
         deviceID = android.os.Build.MANUFACTURER //Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
 
         postFeed.layoutManager = LinearLayoutManager(
@@ -72,6 +78,7 @@ class MainActivity : AppCompatActivity() {
                 }.create()
                 .show()
         }
+        */
     }
 
     //TODO Use-cases can def. be optimized
@@ -94,6 +101,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
+        /*
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             //TODO: figure out wtf request code is
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 1)
@@ -127,11 +135,13 @@ class MainActivity : AppCompatActivity() {
                         Log.d(TAG, "Payload is not bytes or file!")
                     }
                 }
+
             }
 
             override fun onPayloadTransferUpdate(endpointID: String, payloadUpdate: PayloadTransferUpdate) {
             }
         }
+
 
         val connectionCallback = object: ConnectionLifecycleCallback() {
             override fun onConnectionResult(endpointID: String, result: ConnectionResolution) {
@@ -227,5 +237,6 @@ class MainActivity : AppCompatActivity() {
             }.addOnCanceledListener {
                 Log.d(TAG, "Discovery cancelled!")
             }
+            */
     }
 }
