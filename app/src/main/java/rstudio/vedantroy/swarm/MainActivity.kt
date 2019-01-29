@@ -22,7 +22,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "SWARM_APP"
-
     }
 
     @SuppressLint("HardwareIds")
@@ -64,7 +63,8 @@ class MainActivity : AppCompatActivity() {
                     everyPostEver.add(immutablePostData)
                     posts.add(post)
                     //TODO --make this more efficient
-                    postFeed.adapter?.notifyDataSetChanged()
+                    postFeed.adapter?.notifyItemInserted(posts.count() - 1)
+                    //postFeed.adapter?.notifyDataSetChanged()
                     sendPostData(post.postData)
                     dialog.cancel()
                 }.setNegativeButton(R.string.cancel) { dialog, _ ->
