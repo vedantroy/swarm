@@ -60,6 +60,9 @@ class  NetworkUtils(val app: Application) {
                 ConnectionsStatusCodes.STATUS_ERROR -> {
                     setDeviceStatus(endpointID, ConnectionType.DISCONNECTED)
                 }
+                else -> {
+                    Log.d(TAG,"onConnectionResult|Unknown Error")
+                }
             }
         }
 
@@ -69,12 +72,12 @@ class  NetworkUtils(val app: Application) {
 
         override fun onConnectionInitiated(endpointID: String, result: ConnectionInfo) {
             Log.d(TAG, "onConnectionInitiated")
-            Nearby
-                .getConnectionsClient(context)
-                .acceptConnection(endpointID, payloadCallback)
+            setDeviceStatus(endpointID, ConnectionType.CONNECTING)
+            client.acceptConnection(endpointID, payloadCallback)
         }
     }
 
+    //optimize for ranges...
     fun setDeviceStatus(deviceName: String, status: ConnectionType) {
         var deviceExists = false
         for((index, device) in devices.withIndex()) {
@@ -94,6 +97,7 @@ class  NetworkUtils(val app: Application) {
 
     fun requestConnection(endpointID: String) {
         Log.d(TAG, "requestConnection|Requesting Connection")
+        setDeviceStatus(endpointID, ConnectionType.CONNECTING)
         client
             .requestConnection(
                 deviceID,
@@ -115,10 +119,12 @@ class  NetworkUtils(val app: Application) {
         override fun onEndpointFound(endpointID: String, p1: DiscoveredEndpointInfo) {
             Log.d(TAG, "onEndpointFound|Endpoint Found")
             //TODO: endpointName vs endpointID -- what's the diff?
-            requestConnection(endpointID)
+            setDeviceStatus(endpointID, ConnectionType.DISCONNECTED)
+            //requestConnection(endpointID)
         }
 
         override fun onEndpointLost(endpointID: String) {
+            //Ths == device is no longer found AT ALL
             setDeviceStatus(endpointID, ConnectionType.DISCONNECTED)
         }
     }

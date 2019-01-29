@@ -27,7 +27,7 @@ class ConnectionSettingsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         Log.d(TAG, "onActivityCreated")
         connectionStatuses.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-        connectionStatuses.adapter = ConnectionSettingsAdapter(networkUtils.devices, context)
+        connectionStatuses.adapter = ConnectionSettingsAdapter(networkUtils, context)
 
         networkUtils.onDeviceStatusUpdated = fun(index, changeType) {
             Log.d(TAG, "onDeviceStatusUpdated|$index")

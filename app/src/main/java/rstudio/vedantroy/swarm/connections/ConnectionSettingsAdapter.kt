@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.device_status.view.*
+import rstudio.vedantroy.swarm.NetworkUtils
 import rstudio.vedantroy.swarm.R
 
 
@@ -32,5 +33,12 @@ class ConnectionSettingsAdapter(private val items : List<ConnectionStatus>, priv
     inner class ConnectionStatusViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val statusIcon: ImageView = view.status_icon
         val deviceName: TextView = view.device_name
+
+        init {
+            view.setOnClickListener {
+
+            }
+            items[adapterPosition]
+        }
     }
 }
