@@ -16,6 +16,7 @@ import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.text_input_prompt.view.*
+import org.koin.android.ext.android.inject
 
 
 class MainActivity : AppCompatActivity() {
@@ -33,6 +34,8 @@ class MainActivity : AppCompatActivity() {
 
     val connectionStatuses = HashMap<String, Boolean>()
 
+    lateinit var networkUtils : NetworkUtils
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -40,7 +43,6 @@ class MainActivity : AppCompatActivity() {
         val pagerAdapter = BaseFragmentPagerAdapter(this, supportFragmentManager)
         view_pager.adapter = pagerAdapter
         tab_layout.setupWithViewPager(view_pager)
-
 
         /*
         deviceID = android.os.Build.MANUFACTURER //Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)

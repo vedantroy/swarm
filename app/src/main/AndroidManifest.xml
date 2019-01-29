@@ -15,7 +15,8 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme" tools:ignore="GoogleAppIndexingWarning">
+            android:theme="@style/AppTheme" tools:ignore="GoogleAppIndexingWarning"
+            android:name=".SwarmApplication">
         <meta-data
                 android:name="com.google.android.nearby.messages.API_KEY"
                 android:value="AIzaSyAhgb6t_yKWURmzB2loHo7Xn5mrZr_CMwE" />

@@ -1,4 +1,4 @@
-package rstudio.vedantroy.swarm.ConnectionSettings
+package rstudio.vedantroy.swarm.connections
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,13 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.device_status.view.*
-import kotlinx.android.synthetic.main.post.view.*
-import rstudio.vedantroy.swarm.MainActivity
-import rstudio.vedantroy.swarm.Post
 import rstudio.vedantroy.swarm.R
 
 

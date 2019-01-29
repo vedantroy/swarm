@@ -1,4 +1,4 @@
-package rstudio.vedantroy.swarm.ConnectionSettings
+package rstudio.vedantroy.swarm.connections
 
 import android.os.Bundle
 import android.view.LayoutInflater
