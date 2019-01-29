@@ -1,18 +1,18 @@
-package rstudio.vedantroy.swarm
+package rstudio.vedantroy.swarm.posts
 
 import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.post.view.*
+import rstudio.vedantroy.swarm.MainActivity
+import rstudio.vedantroy.swarm.NetworkUtils
 
-import rstudio.vedantroy.swarm.MainActivity.Companion.TAG
+import rstudio.vedantroy.swarm.R
 
-class PostAdapter(private val items : List<Post>, private val context: MainActivity) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
+class PostAdapter(private val items : List<Post>, private val context: Context?, private val networkUtils: NetworkUtils) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         return PostViewHolder(LayoutInflater.from(context).inflate(R.layout.post, parent, false))
@@ -27,7 +27,9 @@ class PostAdapter(private val items : List<Post>, private val context: MainActiv
             holder.itemView.user_display.text = postData.immutablePostData.creator
             if(isLiked) {
                 holder.itemView.isClickable = false
-                holder.itemView.vote_display.setTextColor(ContextCompat.getColor(context, R.color.upvoted_orange))
+                context?.let {
+                    holder.itemView.vote_display.setTextColor(ContextCompat.getColor(it, R.color.upvoted_orange))
+                }
             }
         }
     }
@@ -38,7 +40,7 @@ class PostAdapter(private val items : List<Post>, private val context: MainActiv
                 setOnClickListener {
                     items[adapterPosition].isLiked = true
                     items[adapterPosition].postData.votes++
-                    (context as MainActivity).sendPostData(items[adapterPosition].postData)
+                    networkUtils.sendBytes(items[adapterPosition].postData.toJsonBytes())
                     notifyItemChanged(adapterPosition)
                 }
             }

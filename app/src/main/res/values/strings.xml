@@ -5,4 +5,11 @@
     <string name="submit" >Submit</string>
     <string name="cancel" >Cancel</string>
     <string name="connect">Connect</string>
+    <string name="connect_all">Connect All</string>
+    <string name="find_phones">Start Scanning</string>
+    <string name="stop_finding_phones">Stop Scanning</string>
+
+    <string name="posts_tab">Posts</string>
+    <string name="settings_tab">Settings</string>
+
 </resources>

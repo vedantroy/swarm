@@ -8,14 +8,6 @@
     android:background="@color/greyBackground"
     tools:context=".MainActivity">
 
-    <!--
-    <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/postFeed"
-    />
-    -->
-
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
@@ -25,38 +17,10 @@
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom">
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="Tab 1"/>
-
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="Tab 2"/>
-
-        </com.google.android.material.tabs.TabLayout>
+            android:layout_gravity="bottom"/>
 
     </androidx.viewpager.widget.ViewPager>
 
-    <!--
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="@dimen/fab_margin_minus_horizontal_padding"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:rippleColor="@color/colorAccentLight"
-        android:src="@drawable/ic_pencil_24px"
-        android:clickable="true"
-        android:focusable="true"
-        android:id="@+id/createPost"
-        tools:ignore="RtlHardcoded"/>
-        -->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,6 +18,8 @@
 
     <com.google.android.flexbox.FlexboxLayout
         android:id="@+id/button_row"
+        android:paddingLeft="@dimen/horizontal_padding"
+        android:paddingRight="@dimen/horizontal_padding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -27,17 +29,19 @@
         app:justifyContent="space_between">
 
         <Button
+            android:id="@+id/scanButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Discover"
+            android:text="@string/find_phones"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"/>
 
         <Button
+            android:id="@+id/connectAllButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Connect All"
+            android:text="@string/connect_all"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"/>

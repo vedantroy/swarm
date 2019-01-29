@@ -108,6 +108,7 @@ class  NetworkUtils(val app: Application) {
                 Log.d(TAG, "requestConnection|Success")
             }.addOnFailureListener {
                 Log.d(TAG, "requestConnection|Failure")
+                Log.d(TAG, it.toString())
             }.addOnCanceledListener {
                 Log.d(TAG, "requestConnection|Cancel")
             }.addOnCompleteListener {
@@ -169,6 +170,15 @@ class  NetworkUtils(val app: Application) {
         with(client) {
             stopDiscovery()
             stopAdvertising()
+        }
+    }
+
+    fun sendBytes(bytes: ByteArray) {
+        val payload = Payload.fromBytes(bytes)
+        devices.filter {
+            it.status == ConnectionType.CONNECTED
+        }.map {
+            client.sendPayload(it.name, payload)
         }
     }
 }
