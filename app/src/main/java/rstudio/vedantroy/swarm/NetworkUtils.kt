@@ -6,8 +6,13 @@ import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
 import rstudio.vedantroy.swarm.connections.ConnectionStatus
 import rstudio.vedantroy.swarm.connections.ConnectionType
-import rstudio.vedantroy.swarm.connections.StatusType
 import rstudio.vedantroy.swarm.MainActivity.Companion.TAG
+
+enum class ChangeType {
+    CHANGE,
+    INSERTION,
+    DELETION
+}
 
 
 //Singleton class
@@ -29,7 +34,18 @@ class  NetworkUtils(val app: Application) {
 
     val devices = mutableListOf<ConnectionStatus>()
 
-    var onDeviceStatusUpdated : ((Int) -> Unit)? = null
+    var onDeviceStatusUpdated : ((Int, ChangeType) -> Unit)? = null
+    var onPayloadReceived: ((String, Payload) -> Unit)? = null
+    var onPayloadTransferUpdate: ((String, PayloadTransferUpdate) -> Unit)? = null
+
+    val payloadCallback = object : PayloadCallback() {
+        override fun onPayloadReceived(endpointID: String, payload: Payload) {
+            onPayloadReceived?.invoke(endpointID, payload)
+        }
+        override fun onPayloadTransferUpdate(endpointID: String, payloadUpdate: PayloadTransferUpdate) {
+            onPayloadTransferUpdate?.invoke(endpointID, payloadUpdate)
+        }
+    }
 
     private val connectionCallback = object: ConnectionLifecycleCallback() {
         override fun onConnectionResult(endpointID: String, result: ConnectionResolution) {
@@ -66,13 +82,13 @@ class  NetworkUtils(val app: Application) {
                 Log.d(TAG,"setDeviceStatus|${device.name} to $status")
                 deviceExists = true
                 device.status = status
-                onDeviceStatusUpdated?.invoke(index)
+                onDeviceStatusUpdated?.invoke(index, ChangeType.CHANGE)
             }
         }
         if(!deviceExists) {
             Log.d(TAG, "setDeviceStatus|add $deviceName with $status")
             devices.add(ConnectionStatus(deviceName, status))
-            onDeviceStatusUpdated?.invoke(devices.count() - 1)
+            onDeviceStatusUpdated?.invoke(devices.count() - 1, ChangeType.INSERTION)
         }
     }
 
@@ -140,6 +156,13 @@ class  NetworkUtils(val app: Application) {
             }.addOnCompleteListener {
                 Log.d(TAG, "startFinding|startAdvertising Complete")
             }
+        }
+    }
+
+    fun stopFinding() {
+        with(client) {
+            stopDiscovery()
+            stopAdvertising()
         }
     }
 }

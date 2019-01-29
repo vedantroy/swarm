@@ -21,9 +21,9 @@ class ConnectionSettingsAdapter(private val items : List<ConnectionStatus>, priv
 
     override fun onBindViewHolder(holder: ConnectionStatusViewHolder, position: Int) {
         val drawableID = when(items[position].status) {
-            StatusType.DISCONNECTED -> R.drawable.ic_no_connection
-            StatusType.CONNECTING ->  R.drawable.ic_connecting
-            StatusType.CONNECTED -> R.drawable.ic_connected
+            ConnectionType.DISCONNECTED -> R.drawable.ic_no_connection
+            ConnectionType.CONNECTING ->  R.drawable.ic_connecting
+            ConnectionType.CONNECTED -> R.drawable.ic_connected
         }
         holder.statusIcon.setBackgroundResource(drawableID)
         holder.deviceName.text = items[position].name
@@ -32,6 +32,5 @@ class ConnectionSettingsAdapter(private val items : List<ConnectionStatus>, priv
     inner class ConnectionStatusViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val statusIcon: ImageView = view.status_icon
         val deviceName: TextView = view.device_name
-
     }
 }
