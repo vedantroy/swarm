@@ -3,7 +3,6 @@ package rstudio.vedantroy.swarm
 import android.app.Application
 import org.koin.android.ext.android.startKoin
 import org.koin.android.ext.koin.androidApplication
-import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module.module
 
 class SwarmApplication : Application() {
@@ -13,7 +12,7 @@ class SwarmApplication : Application() {
     //not sure why I don't just manually use
     //applicationContext
     val appModule = module {
-        single { DeviceID(androidApplication()) }
+        single { UniqueDeviceID(androidApplication()) }
         single { NetworkUtils(androidApplication(), get()) }
     }
 

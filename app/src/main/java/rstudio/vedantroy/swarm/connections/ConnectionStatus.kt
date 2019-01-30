@@ -1,6 +1,9 @@
 package rstudio.vedantroy.swarm.connections
 
-data class ConnectionStatus(val deviceId: String, var endpointId: String, var status: ConnectionType)
+data class ConnectionStatus(val deviceID: DeviceID, var endpointID: EndpointID, var status: ConnectionType)
+
+inline class DeviceID(val rawValue: String)
+inline class EndpointID(val rawValue: String)
 
 enum class ConnectionType {
     DISCONNECTED,

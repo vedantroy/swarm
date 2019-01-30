@@ -38,7 +38,7 @@ class ConnectionSettingsAdapter(private val networkUtils: NetworkUtils, private 
             ConnectionType.CONNECTED -> R.drawable.ic_connected
         }
         holder.statusIcon.setBackgroundResource(drawableID)
-        holder.deviceName.text = networkUtils.devices[position].name
+        holder.deviceName.text = networkUtils.devices[position].deviceID.rawValue
     }
 
     inner class ConnectionStatusViewHolder(view: View): RecyclerView.ViewHolder(view) {
@@ -46,7 +46,7 @@ class ConnectionSettingsAdapter(private val networkUtils: NetworkUtils, private 
         val deviceName: TextView = view.device_name
         init {
             view.connectButton.setOnClickListener {
-                networkUtils.requestConnection(networkUtils.devices[adapterPosition].name)
+                networkUtils.requestConnection(networkUtils.devices[adapterPosition].endpointID)
             }
         }
     }

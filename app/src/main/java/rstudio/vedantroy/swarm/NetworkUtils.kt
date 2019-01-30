@@ -1,27 +1,28 @@
 package rstudio.vedantroy.swarm
 
-import android.annotation.SuppressLint
 import android.app.Application
-import android.provider.Settings
 import android.util.Log
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
+import org.jetbrains.anko.collections.forEachWithIndex
 import rstudio.vedantroy.swarm.connections.ConnectionStatus
 import rstudio.vedantroy.swarm.connections.ConnectionType
 import rstudio.vedantroy.swarm.MainActivity.Companion.TAG
+import rstudio.vedantroy.swarm.connections.EndpointID
+import rstudio.vedantroy.swarm.connections.DeviceID
 
-enum class ChangeType {
-    CHANGE,
+enum class Change {
+    MODIFICATION,
     INSERTION,
     DELETION,
 }
 
 
 //Singleton class
-class  NetworkUtils(val app: Application, deviceID: DeviceID) {
+class  NetworkUtils(val app: Application, uniqueDeviceID: UniqueDeviceID) {
     private val context = app.applicationContext
     private val SERVICE_ID: String = context.packageName
-    val USER_ID  = deviceID.id
+    val USER_ID  = uniqueDeviceID.id
     private val client : ConnectionsClient = Nearby
         .getConnectionsClient(context)
 
@@ -37,7 +38,7 @@ class  NetworkUtils(val app: Application, deviceID: DeviceID) {
 
     val devices = mutableListOf<ConnectionStatus>()
 
-    var onDeviceStatusUpdated : ((Int, ChangeType) -> Unit)? = null
+    var onDeviceStatusUpdated : ((Int, Change) -> Unit)? = null
     var onPayloadReceived: ((String, Payload) -> Unit)? = null
     var onPayloadTransferUpdate: ((String, PayloadTransferUpdate) -> Unit)? = null
 
@@ -51,8 +52,9 @@ class  NetworkUtils(val app: Application, deviceID: DeviceID) {
     }
 
     private val connectionCallback = object: ConnectionLifecycleCallback() {
-        override fun onConnectionResult(endpointID: String, result: ConnectionResolution) {
+        override fun onConnectionResult(_endpointID: String, result: ConnectionResolution) {
             Log.d(TAG, "onConnectionResult")
+            val endpointID = EndpointID(_endpointID)
             when(result.status.statusCode) {
                 ConnectionsStatusCodes.STATUS_OK -> {
                     setDeviceStatus(endpointID, ConnectionType.CONNECTED)
@@ -70,52 +72,82 @@ class  NetworkUtils(val app: Application, deviceID: DeviceID) {
         }
 
         override fun onDisconnected(endpointID: String) {
-            setDeviceStatus(endpointID, ConnectionType.DISCONNECTED)
+            setDeviceStatus(EndpointID(endpointID), ConnectionType.DISCONNECTED)
         }
 
         override fun onConnectionInitiated(endpointID: String, info: ConnectionInfo) {
             Log.d(TAG, "onConnectionInitiated")
             Log.d(TAG, "onConnectionInitiated|${info.endpointName}")
-            setDeviceStatus(endpointID, ConnectionType.CONNECTING)
+            setDeviceStatus(EndpointID(endpointID), ConnectionType.CONNECTING)
             client.acceptConnection(endpointID, payloadCallback)
         }
     }
 
-    //optimize for ranges... lol what does this mean, I forget
-    fun setDeviceStatus(deviceName: String, status: ConnectionType?) {
-        if(status == null) {
-            val index = devices.indexOf(devices.find { it.name == deviceName })
-            if(index > -1) {
-                devices.removeAt(index)
-                onDeviceStatusUpdated?.invoke(index, ChangeType.DELETION)
-            } else {
-                Log.d(TAG, "setDeviceStatus|Device scheduled for deletion not found")
+    fun addDevice(deviceID: DeviceID, endpointID: EndpointID, status: ConnectionType) {
+        val duplicateDevices = devices.filter { it.deviceID == deviceID }
+        if(duplicateDevices.count() > 0) {
+            Log.d(TAG,"addDevice|Duplicates Found")
+            duplicateDevices.forEachWithIndex { index, device ->
+                device.endpointID = endpointID
+                device.status = status
+                onDeviceStatusUpdated?.invoke(index, Change.MODIFICATION)
             }
         } else {
-            var deviceExists = false
-            for((index, device) in devices.withIndex()) {
-                if(device.name == deviceName) {
-                    Log.d(TAG,"setDeviceStatus|${device.name} to $status")
-                    deviceExists = true
-                    device.status = status
-                    onDeviceStatusUpdated?.invoke(index, ChangeType.CHANGE)
-                }
-            }
-            if(!deviceExists) {
-                Log.d(TAG, "setDeviceStatus|add $deviceName with $status")
-                devices.add(ConnectionStatus(deviceName, status))
-                onDeviceStatusUpdated?.invoke(devices.count() - 1, ChangeType.INSERTION)
-            }
+            Log.d(TAG,"addDevice|Adding Device")
+            devices.add(ConnectionStatus(deviceID, endpointID, status))
+            onDeviceStatusUpdated?.invoke(devices.count() - 1, Change.INSERTION)
         }
     }
 
-    fun requestConnection(endpointID: String) {
+    fun removeDevice(endpointID: EndpointID) {
+        val devicesForDeletion = devices.filter {
+            it.endpointID == endpointID
+        }
+        if(devicesForDeletion.count() != 1) {
+            Log.d(TAG, "removeDevice|Deleting ${devicesForDeletion.count()} -- this is not expected")
+        }
+        devices.removeAll(devicesForDeletion)
+    }
+
+    //optimize for ranges... lol what does this mean, I forget
+    fun setDeviceStatus(endpointID: EndpointID, status: ConnectionType) {
+        var deviceExists = false
+
+        for((index, device) in devices.withIndex()) {
+            if(device.endpointID == endpointID) {
+                Log.d(TAG,"setDeviceStatus|${device.deviceID} to $status")
+                deviceExists = true
+                device.status = status
+                onDeviceStatusUpdated?.invoke(index, Change.MODIFICATION)
+            }
+        }
+
+        if(!deviceExists) {
+            Log.d(TAG, "setDeviceStatus|Device did not exist -- this is not expected")
+            /*
+            Log.d(TAG, "setDeviceStatus|add $deviceName with $status")
+            devices.add(ConnectionStatus(end, status))
+            onDeviceStatusUpdated?.invoke(devices.count() - 1, Change.INSERTION)
+            */
+        }
+        /*
+            val index = devices.indexOf(devices.find { it.name == deviceName })
+            if(index > -1) {
+                devices.removeAt(index)
+                onDeviceStatusUpdated?.invoke(index, Change.DELETION)
+            } else {
+                Log.d(TAG, "setDeviceStatus|Device scheduled for deletion not found")
+            }
+       */
+    }
+
+    fun requestConnection(endpointID: EndpointID) {
         Log.d(TAG, "requestConnection|Requesting Connection")
         setDeviceStatus(endpointID, ConnectionType.CONNECTING)
         client
             .requestConnection(
                 USER_ID,
-                endpointID,
+                endpointID.rawValue,
                 connectionCallback
             )
             .addOnSuccessListener {
@@ -133,7 +165,7 @@ class  NetworkUtils(val app: Application, deviceID: DeviceID) {
 
     //endpointID is transient and fleeting--it changes often.
         //YET--endpointID is what is used for connection
-    //endpointName is permament. non-transient. sexy.
+    //endpointName is permanent
 
     //endpoint name -- permanent. identifies devices
     //endpoint ID -- many to one relationship w/ endpoint name. identifies endpoint
@@ -153,13 +185,12 @@ class  NetworkUtils(val app: Application, deviceID: DeviceID) {
             Log.d(TAG, "onEndpointFound|Endpoint Found")
             Log.d(TAG, "onEndpointFound|${info.endpointName}")
             //TODO: endpointName vs endpointID -- what's the diff?
-            setDeviceStatus(endpointID, ConnectionType.DISCONNECTED)
-            //requestConnection(endpointID)
+            addDevice(DeviceID(info.endpointName), EndpointID(endpointID), ConnectionType.DISCONNECTED)
         }
 
         override fun onEndpointLost(endpointID: String) {
             //Ths == device is no longer found AT ALL
-            setDeviceStatus(endpointID, null)
+            removeDevice(EndpointID(endpointID))
         }
     }
 
@@ -211,7 +242,7 @@ class  NetworkUtils(val app: Application, deviceID: DeviceID) {
         devices.filter {
             it.status == ConnectionType.CONNECTED
         }.map {
-            client.sendPayload(it.name, payload)
+            client.sendPayload(it.endpointID.rawValue, payload)
         }
     }
 }
