@@ -23,13 +23,13 @@ class PostsFragment : Fragment() {
 
 
     private val posts = mutableListOf<Post>()
-    val everyPostEver = mutableListOf<ImmutablePostData>()
+    private val everyPostEver = mutableListOf<ImmutablePostData>()
 
 
-    val networkUtils : NetworkUtils by inject()
+    private val networkUtils : NetworkUtils by inject()
 
     //TODO Use-cases can def. be optimized
-    fun alreadyHavePost(immutablePostData: ImmutablePostData)  = everyPostEver.find { it == immutablePostData } != null
+    private fun alreadyHavePost(immutablePostData: ImmutablePostData)  = everyPostEver.find { it == immutablePostData } != null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -47,7 +47,8 @@ class PostsFragment : Fragment() {
                 .setTitle(getString(R.string.text_prompt_title))
                 .setView(textPromptLayout)
                 .setPositiveButton(R.string.submit) { dialog, _ ->
-                    val immutablePostData = ImmutablePostData(textPromptLayout.post_input.text.toString(), android.os.Build.MANUFACTURER, 0)
+                    //deviceID
+                    val immutablePostData = ImmutablePostData(textPromptLayout.post_input.text.toString(), networkUtils.USER_ID, 0)
                     while(alreadyHavePost(immutablePostData)) {
                         Log.d(TAG,"Count: " + immutablePostData.count)
                         immutablePostData.count++

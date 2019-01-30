@@ -7,12 +7,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/postFeed"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:padding="4dp"
+        android:paddingTop="4dp"
         android:paddingLeft="@dimen/horizontal_padding"
         android:paddingRight="@dimen/horizontal_padding"
         app:layout_constraintTop_toTopOf="parent"

@@ -1,6 +1,8 @@
 package rstudio.vedantroy.swarm
 
+import android.annotation.SuppressLint
 import android.app.Application
+import android.provider.Settings
 import android.util.Log
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
@@ -11,14 +13,15 @@ import rstudio.vedantroy.swarm.MainActivity.Companion.TAG
 enum class ChangeType {
     CHANGE,
     INSERTION,
-    DELETION
+    DELETION,
 }
 
 
 //Singleton class
-class  NetworkUtils(val app: Application) {
+class  NetworkUtils(val app: Application, deviceID: DeviceID) {
     private val context = app.applicationContext
-    private val deviceID  = android.os.Build.MANUFACTURER
+    private val SERVICE_ID: String = context.packageName
+    val USER_ID  = deviceID.id
     private val client : ConnectionsClient = Nearby
         .getConnectionsClient(context)
 
@@ -70,28 +73,39 @@ class  NetworkUtils(val app: Application) {
             setDeviceStatus(endpointID, ConnectionType.DISCONNECTED)
         }
 
-        override fun onConnectionInitiated(endpointID: String, result: ConnectionInfo) {
+        override fun onConnectionInitiated(endpointID: String, info: ConnectionInfo) {
             Log.d(TAG, "onConnectionInitiated")
+            Log.d(TAG, "onConnectionInitiated|${info.endpointName}")
             setDeviceStatus(endpointID, ConnectionType.CONNECTING)
             client.acceptConnection(endpointID, payloadCallback)
         }
     }
 
-    //optimize for ranges...
-    fun setDeviceStatus(deviceName: String, status: ConnectionType) {
-        var deviceExists = false
-        for((index, device) in devices.withIndex()) {
-            if(device.name == deviceName) {
-                Log.d(TAG,"setDeviceStatus|${device.name} to $status")
-                deviceExists = true
-                device.status = status
-                onDeviceStatusUpdated?.invoke(index, ChangeType.CHANGE)
+    //optimize for ranges... lol what does this mean, I forget
+    fun setDeviceStatus(deviceName: String, status: ConnectionType?) {
+        if(status == null) {
+            val index = devices.indexOf(devices.find { it.name == deviceName })
+            if(index > -1) {
+                devices.removeAt(index)
+                onDeviceStatusUpdated?.invoke(index, ChangeType.DELETION)
+            } else {
+                Log.d(TAG, "setDeviceStatus|Device scheduled for deletion not found")
             }
-        }
-        if(!deviceExists) {
-            Log.d(TAG, "setDeviceStatus|add $deviceName with $status")
-            devices.add(ConnectionStatus(deviceName, status))
-            onDeviceStatusUpdated?.invoke(devices.count() - 1, ChangeType.INSERTION)
+        } else {
+            var deviceExists = false
+            for((index, device) in devices.withIndex()) {
+                if(device.name == deviceName) {
+                    Log.d(TAG,"setDeviceStatus|${device.name} to $status")
+                    deviceExists = true
+                    device.status = status
+                    onDeviceStatusUpdated?.invoke(index, ChangeType.CHANGE)
+                }
+            }
+            if(!deviceExists) {
+                Log.d(TAG, "setDeviceStatus|add $deviceName with $status")
+                devices.add(ConnectionStatus(deviceName, status))
+                onDeviceStatusUpdated?.invoke(devices.count() - 1, ChangeType.INSERTION)
+            }
         }
     }
 
@@ -100,7 +114,7 @@ class  NetworkUtils(val app: Application) {
         setDeviceStatus(endpointID, ConnectionType.CONNECTING)
         client
             .requestConnection(
-                deviceID,
+                USER_ID,
                 endpointID,
                 connectionCallback
             )
@@ -109,6 +123,7 @@ class  NetworkUtils(val app: Application) {
             }.addOnFailureListener {
                 Log.d(TAG, "requestConnection|Failure")
                 Log.d(TAG, it.toString())
+                setDeviceStatus(endpointID, ConnectionType.DISCONNECTED)
             }.addOnCanceledListener {
                 Log.d(TAG, "requestConnection|Cancel")
             }.addOnCompleteListener {
@@ -116,9 +131,27 @@ class  NetworkUtils(val app: Application) {
             }
     }
 
+    //endpointID is transient and fleeting--it changes often.
+        //YET--endpointID is what is used for connection
+    //endpointName is permament. non-transient. sexy.
+
+    //endpoint name -- permanent. identifies devices
+    //endpoint ID -- many to one relationship w/ endpoint name. identifies endpoint
+    //used for connections
+    //status -- one to one. identifies status
+
+    //advertising callback is only triggered when a discoverer does requestConnection
+        //this is why it's a generic connection callback and not advertising specific
+    //the discovery callback is triggered when a discovery is made
+
+    //endpoint is changed twice (ever)
+    //discovery-- @ this time status is set to disconnected
+    //
+
     private val discoveryCallback = object : EndpointDiscoveryCallback() {
-        override fun onEndpointFound(endpointID: String, p1: DiscoveredEndpointInfo) {
+        override fun onEndpointFound(endpointID: String, info: DiscoveredEndpointInfo) {
             Log.d(TAG, "onEndpointFound|Endpoint Found")
+            Log.d(TAG, "onEndpointFound|${info.endpointName}")
             //TODO: endpointName vs endpointID -- what's the diff?
             setDeviceStatus(endpointID, ConnectionType.DISCONNECTED)
             //requestConnection(endpointID)
@@ -126,7 +159,7 @@ class  NetworkUtils(val app: Application) {
 
         override fun onEndpointLost(endpointID: String) {
             //Ths == device is no longer found AT ALL
-            setDeviceStatus(endpointID, ConnectionType.DISCONNECTED)
+            setDeviceStatus(endpointID, null)
         }
     }
 
@@ -134,7 +167,7 @@ class  NetworkUtils(val app: Application) {
     fun startFinding() {
         with(Nearby.getConnectionsClient(context)) {
             startDiscovery(
-                context.packageName,
+                SERVICE_ID,
                 discoveryCallback,
                 discoveryOptions
             ).addOnSuccessListener {
@@ -149,8 +182,8 @@ class  NetworkUtils(val app: Application) {
             }
 
             startAdvertising(
-                deviceID,
-                applicationContext.packageName,
+                USER_ID,
+                SERVICE_ID,
                 connectionCallback,
                 advertisingOptions
             ).addOnSuccessListener {

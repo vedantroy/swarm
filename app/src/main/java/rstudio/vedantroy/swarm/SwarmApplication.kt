@@ -13,7 +13,8 @@ class SwarmApplication : Application() {
     //not sure why I don't just manually use
     //applicationContext
     val appModule = module {
-        single { NetworkUtils(androidApplication()) }
+        single { DeviceID(androidApplication()) }
+        single { NetworkUtils(androidApplication(), get()) }
     }
 
     override fun onCreate() {

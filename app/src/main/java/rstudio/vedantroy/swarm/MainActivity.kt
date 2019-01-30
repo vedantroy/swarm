@@ -25,9 +25,6 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("HardwareIds")
     lateinit var deviceID : String  //= Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
 
-
-    val connectionStatuses = HashMap<String, Boolean>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
