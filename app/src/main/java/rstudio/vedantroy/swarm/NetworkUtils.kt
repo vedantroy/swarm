@@ -36,6 +36,7 @@ class  NetworkUtils(val app: Application, uniqueDeviceID: UniqueDeviceID) {
         .setStrategy(Strategy.P2P_CLUSTER)
         .build()
 
+    //TODO: This can be replaced with a real MAP/HashMap.
     val devices = mutableListOf<ConnectionStatus>()
 
     var onDeviceStatusUpdated : ((Int, Change) -> Unit)? = null
@@ -239,6 +240,7 @@ class  NetworkUtils(val app: Application, uniqueDeviceID: UniqueDeviceID) {
 
     fun sendBytes(bytes: ByteArray) {
         val payload = Payload.fromBytes(bytes)
+        //TODO: When use real HashMap, change to foreach(device of devices) if (device.status == CONNECTED) then sendPayload
         devices.filter {
             it.status == ConnectionType.CONNECTED
         }.map {
